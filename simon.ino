@@ -6,18 +6,18 @@
 static int NUM_LIGHTS = 4;
 static int SPEAKER_PIN = 5;
 
-int lightPins[4] = {9, 8, 7, 6};
-int buttonPins[4] = {13, 12, 11, 10};
+int lightPins[NUM_LIGHTS] = {9, 8, 7, 6};
+int buttonPins[NUM_LIGHTS] = {13, 12, 11, 10};
 // Frequencies for E4 A4 C#5 E5
-int tones[4] = {330, 440, 554, 659};
-// int tones[4] = {311, 370, 440, 523};
+int tones[NUM_LIGHTS] = {330, 440, 554, 659};
+// int tones[NUM_LIGHTS] = {311, 370, 440, 523};
 int WRONG_TONE = 220;
 
-Button *buttons[4];
+Button *buttons[NUM_LIGHTS];
 
 void setup() {
   pinMode(SPEAKER_PIN, OUTPUT);
-  for (int i=0; i<4; i++){
+  for (int i=0; i<NUM_LIGHTS; i++){
     pinMode(lightPins[i], OUTPUT);
     buttons[i] = new Button(buttonPins[i]);
     buttons[i]->begin();
@@ -82,6 +82,7 @@ void loop() {
         digitalWrite(lightPins[input], LOW);
         responses++;
       } else {
+        // If it was wrong, play the "Wrong button" sound and flash the button you were supposed to press
         noTone(SPEAKER_PIN);
         tone(SPEAKER_PIN, WRONG_TONE, 750);
         for(int i=0; i<7; i++){
@@ -91,11 +92,11 @@ void loop() {
           delay(100);
         }
         inGame = false;
-      }
-      
-      // If not,     
+      }  
     }
     //Now that the sequence has been reentered, we can go back to the start of the while loop, and get a new 
   }
+  // The game has ended, so loop forever
   while(true){}
+  // TODO: Add a way to start a new game using a start button
 }
