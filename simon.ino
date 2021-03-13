@@ -1,6 +1,8 @@
 #include <Button.h>
 #include <stdlib.h>
 
+// Ben is editing this code.
+
 static int NUM_LIGHTS = 4;
 static int SPEAKER_PIN = 5;
 
