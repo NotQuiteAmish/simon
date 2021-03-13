@@ -10,6 +10,8 @@ int lightPins[4] = {9, 8, 7, 6};
 int buttonPins[4] = {13, 12, 11, 10};
 // Frequencies for E4 A4 C#5 E5
 int tones[4] = {330, 440, 554, 659};
+// int tones[4] = {311, 370, 440, 523};
+int WRONG_TONE = 220;
 
 Button *buttons[4];
 
@@ -18,9 +20,10 @@ void setup() {
   for (int i=0; i<4; i++){
     pinMode(lightPins[i], OUTPUT);
     buttons[i] = new Button(buttonPins[i]);
+    buttons[i]->begin();
   }
   Serial.begin(9600);
-  randomSeed(analogRead(0) * analogRead(1));
+  randomSeed(analogRead(0) * analogRead(1) * analogRead(2));
 }
 
 void loop() {
@@ -39,7 +42,9 @@ void loop() {
 
     // Play the sequence of lights/tones
     // We don't care about any inputs during this so we can use delay();
+    delay(750);
     for (int i=0; i<len; i++){
+      noTone(SPEAKER_PIN);
       tone(SPEAKER_PIN, tones[sequence[i]], 250);
       digitalWrite(lightPins[sequence[i]], HIGH);
       delay(250);
@@ -56,7 +61,7 @@ void loop() {
       
       // Wait for an input
       // This loop stops when the user takes over 5 seconds or gives a press
-      while ((millis() - lastActionTime < 5000) and (inputGiven == false)){
+      while (((millis() - lastActionTime) < 5000) and (inputGiven == false)){
         // Check all of the buttons for their state
         for (int i=0; i<NUM_LIGHTS; i++){
           if (buttons[i]->pressed()){
@@ -70,15 +75,27 @@ void loop() {
       // Check if the given input was correct. 
       // If so, play the note and continue on to wait for the next input
       if ((inputGiven) and (input == sequence[responses])){
-        tone(SPEAKER_PIN, tones[sequence[input]], 250);
+        noTone(SPEAKER_PIN);
+        tone(SPEAKER_PIN, tones[input], 250);
         digitalWrite(lightPins[input], HIGH);
         delay(250);
         digitalWrite(lightPins[input], LOW);
+        responses++;
+      } else {
+        noTone(SPEAKER_PIN);
+        tone(SPEAKER_PIN, WRONG_TONE, 750);
+        for(int i=0; i<7; i++){
+          digitalWrite(lightPins[sequence[responses]], HIGH);
+          delay(100);
+          digitalWrite(lightPins[sequence[responses]], LOW);
+          delay(100);
+        }
+        inGame = false;
       }
       
       // If not,     
     }
     //Now that the sequence has been reentered, we can go back to the start of the while loop, and get a new 
   }
-
+  while(true){}
 }
