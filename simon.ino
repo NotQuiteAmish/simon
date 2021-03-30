@@ -1,10 +1,13 @@
 #include <Button.h>
 #include <stdlib.h>
 
+#include "Talkie.h"
+#include "Vocab_US_Large.h"
+
 // Ben is editing this code.
 
-static int NUM_LIGHTS = 4;
-static int SPEAKER_PIN = 5;
+const int NUM_LIGHTS = 4;
+const int SPEAKER_PIN = 3;
 
 int lightPins[NUM_LIGHTS] = {9, 8, 7, 6};
 int buttonPins[NUM_LIGHTS] = {13, 12, 11, 10};
@@ -14,6 +17,8 @@ int tones[NUM_LIGHTS] = {330, 440, 554, 659};
 int WRONG_TONE = 220;
 
 Button *buttons[NUM_LIGHTS];
+
+Talkie voice(true, false);
 
 void setup() {
   pinMode(SPEAKER_PIN, OUTPUT);
